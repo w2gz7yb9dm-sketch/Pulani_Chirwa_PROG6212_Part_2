@@ -25,5 +25,12 @@ namespace RaceDay.API.Models
         public User? User { get; set; }
 
         public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+
+        public User? Organiser { get; set; }
+
+        public ICollection<Category> Categories { get; set; }
+            = new List<Category>();
+
+        public Route? Route { get; set; }
     }
 }
