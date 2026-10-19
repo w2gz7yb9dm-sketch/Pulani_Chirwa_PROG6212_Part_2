@@ -22,7 +22,7 @@ namespace RaceDay.API.Models
 
         public int UserId { get; set; }
 
-        public User? User { get; set; }
+       
 
         public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
 
