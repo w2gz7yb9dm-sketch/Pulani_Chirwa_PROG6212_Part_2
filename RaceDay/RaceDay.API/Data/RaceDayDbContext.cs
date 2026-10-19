@@ -23,12 +23,14 @@ namespace RaceDay.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
+
             // An organiser can create multiple events.
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Organiser)
                 .WithMany(u => u.Events)
-               .HasForeignKey(e => e.UserId)
+                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             // Each event can have multiple categories.
             modelBuilder.Entity<Category>()
