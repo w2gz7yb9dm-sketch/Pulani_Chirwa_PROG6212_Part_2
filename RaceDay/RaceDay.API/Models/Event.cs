@@ -9,24 +9,36 @@ namespace RaceDay.API.Models
     {
         public int EventId { get; set; }
 
+        public int OrganiserId { get; set; }
+
         [Required]
         [MaxLength(200)]
-        public string EventName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         public string? Description { get; set; }
 
-        [Required]
-        public DateTime EventDate { get; set; }
+        public string? EventType { get; set; }
 
-        public string? Location { get; set; }
+        public decimal? DistanceKm { get; set; }
 
-        public int UserId { get; set; }
+        public DateTime StartDateTime { get; set; }
 
-       
+        public string? VenueName { get; set; }
 
-        public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+        public string? City { get; set; }
+
+        public string? Province { get; set; }
+
+        public DateTime? RegistrationCloseDate { get; set; }
+
+        public string? Status { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public User? Organiser { get; set; }
+
+        public ICollection<Enrolment> Enrolments { get; set; }
+            = new List<Enrolment>();
 
         public ICollection<Category> Categories { get; set; }
             = new List<Category>();
