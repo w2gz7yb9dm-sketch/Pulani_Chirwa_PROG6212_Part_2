@@ -83,7 +83,38 @@ namespace RaceDay.API.Data
             // Prevent duplicate email addresses.
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
-                .IsUnique();
+                .IsUnique()
+                .HasDatabaseName("UQ_Users_Email");
+
+            // Prevent duplicate enrolments for the same event.
+            modelBuilder.Entity<Enrolment>()
+                .HasIndex(en => new { en.ParticipantId, en.EventId })
+                .IsUnique()
+                .HasDatabaseName("UQ_Enrolments_Participant_Event");
+
+            // Prevent duplicate category names within an event.
+            modelBuilder.Entity<Category>()
+                .HasIndex(c => new { c.EventId, c.Name })
+                .IsUnique()
+                .HasDatabaseName("UQ_Categories_Event_Name");
+
+            // Each event can have only one route.
+            modelBuilder.Entity<Route>()
+                .HasIndex(r => r.EventId)
+                .IsUnique()
+                .HasDatabaseName("UQ_Routes_Event");
+
+            // Race numbers must be unique.
+            modelBuilder.Entity<Enrolment>()
+                .HasIndex(en => en.RaceNumber)
+                .IsUnique()
+                .HasDatabaseName("UX_Enrolments_RaceNumber");
+
+            // Each enrolment can have one result.
+            modelBuilder.Entity<Result>()
+                .HasIndex(r => r.EnrolmentId)
+                .IsUnique()
+                .HasDatabaseName("UQ_Results_Enrolment");
 
             // Prevent duplicate enrolments for the same event.
             modelBuilder.Entity<Enrolment>()
