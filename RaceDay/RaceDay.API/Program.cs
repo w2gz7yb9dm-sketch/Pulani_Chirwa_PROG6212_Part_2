@@ -1,6 +1,8 @@
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RaceDay.API.Data;
+using RaceDay.API.Services;
 
 namespace RaceDay.API
 {
@@ -10,31 +12,92 @@ namespace RaceDay.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Register the RaceDay SQL Server database.
-            builder.Services.AddDbContext<RaceDayDbContext>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString(
-                        "DefaultConnection")));
+            // ==========================================
+            // 1. DATABASE CONNECTION
+            // ==========================================
 
-            // Register API controllers.
+            builder.Services.AddDbContext<RaceDayDbContext>(
+                options =>
+                    options.UseSqlServer(
+                        builder.Configuration.GetConnectionString(
+                            "DefaultConnection")));
+
+            // ==========================================
+            // 2. API CONTROLLERS
+            // ==========================================
+
             builder.Services.AddControllers();
 
-            // Register OpenAPI services.
-            builder.Services.AddOpenApi();
+            // ==========================================
+            // 3. SWAGGER / OPENAPI
+            // ==========================================
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            // ==========================================
+            // 4. SESSION CONFIGURATION
+            // ==========================================
+
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout =
+                    TimeSpan.FromMinutes(30);
+
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite =
+                    SameSiteMode.Lax;
+
+                options.Cookie.SecurePolicy =
+                    CookieSecurePolicy.Always;
+            });
+
+            // ==========================================
+            // 5. REGISTER APPLICATION SERVICES
+            // ==========================================
+
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped<SessionUserService>();
+
+            // ==========================================
+            // 6. BUILD APPLICATION
+            // ==========================================
 
             var app = builder.Build();
 
-            // Enable OpenAPI in development.
+            // ==========================================
+            // 7. SWAGGER IN DEVELOPMENT
+            // ==========================================
+
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            // ==========================================
+            // 8. HTTP REQUEST PIPELINE
+            // ==========================================
+
+            //app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            // Enable session storage.
+            app.UseSession();
 
             app.UseAuthorization();
 
+            // Enable API controller endpoints.
             app.MapControllers();
+
+            // ==========================================
+            // 9. RUN APPLICATION
+            // ==========================================
 
             app.Run();
         }

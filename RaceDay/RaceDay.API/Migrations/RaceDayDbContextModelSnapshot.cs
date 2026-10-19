@@ -56,7 +56,8 @@ namespace RaceDay.API.Migrations
                     b.HasKey("CategoryId");
 
                     b.HasIndex("EventId", "Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Categories_Event_Name");
 
                     b.ToTable("Categories");
                 });
@@ -101,8 +102,14 @@ namespace RaceDay.API.Migrations
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("RaceNumber")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Enrolments_RaceNumber")
+                        .HasFilter("[RaceNumber] IS NOT NULL");
+
                     b.HasIndex("ParticipantId", "EventId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Enrolments_Participant_Event");
 
                     b.ToTable("Enrolments");
                 });
@@ -115,26 +122,47 @@ namespace RaceDay.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
 
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal?>("DistanceKm")
+                        .HasColumnType("decimal(6,2)");
 
-                    b.Property<string>("EventName")
+                    b.Property<string>("EventType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Location")
+                    b.Property<int>("OrganiserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Province")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("RegistrationCloseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VenueName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EventId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OrganiserId");
 
                     b.ToTable("Events");
                 });
@@ -175,7 +203,8 @@ namespace RaceDay.API.Migrations
                     b.HasIndex("CapturedByUserId");
 
                     b.HasIndex("EnrolmentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Results_Enrolment");
 
                     b.ToTable("Results");
                 });
@@ -216,7 +245,8 @@ namespace RaceDay.API.Migrations
                     b.HasKey("RouteId");
 
                     b.HasIndex("EventId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Routes_Event");
 
                     b.ToTable("Routes");
                 });
@@ -270,7 +300,8 @@ namespace RaceDay.API.Migrations
                     b.HasKey("UserId");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Users_Email");
 
                     b.ToTable("Users");
                 });
@@ -317,7 +348,7 @@ namespace RaceDay.API.Migrations
                 {
                     b.HasOne("RaceDay.API.Models.User", "Organiser")
                         .WithMany("Events")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("OrganiserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

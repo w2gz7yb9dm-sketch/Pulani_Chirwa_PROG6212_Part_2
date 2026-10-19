@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RaceDay.API.Models
 {
@@ -19,6 +20,7 @@ namespace RaceDay.API.Models
 
         public string? EventType { get; set; }
 
+        [Column(TypeName = "decimal(6,2)")]
         public decimal? DistanceKm { get; set; }
 
         public DateTime StartDateTime { get; set; }
